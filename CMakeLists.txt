@@ -37,7 +37,8 @@ add_executable(homework_1
 
 target_link_libraries(homework_1 ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES}) 
 
-
+# 添加子目录
+add_subdirectory(vio_data_simulation-hw2)
 
 
 ## Declare a C++ library
