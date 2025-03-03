@@ -7,7 +7,8 @@
       },
       "includePath": [
         "/opt/ros/noetic/include/**",
-        "/home/vulcan/105/VIO_Class/src/homework_vio_gaoxiang/include/**",
+        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/vio_LM-hw3/**",
         "/usr/include/**"
       ],
       "name": "ROS",

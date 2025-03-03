@@ -89,7 +89,7 @@ int main(int argc, char** argv)
         MotionData data_noise = data;
         imuGen.addIMUnoise(data_noise);
         // to qua
-        Eigen::Quaterniond q(data_noise.Rwb);
+        Eigen::Quaternioniond q(data_noise.Rwb);
 
         //四元数位姿
         imu_data.orientation.x = q.x();
