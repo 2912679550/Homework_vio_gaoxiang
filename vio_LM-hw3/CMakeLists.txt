@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-project(slam_course)
+project(homework_vio_gaoxiang)
 
 set(DEFAULT_BUILD_TYPE "Release")
+
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
     set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE
@@ -33,8 +34,9 @@ option(BUILD_TESTS "Build test for slam course" No)
 
 # third party libs
 # eigen
-find_package(Eigen REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIR})
+# set(Eigen3_DIR "/usr/local/include/eigen3")
+# find_package(Eigen3 REQUIRED)
+# include_directories(${EIGEN_INCLUDE_DIR})
 
 # opencv
 find_package(OpenCV REQUIRED)

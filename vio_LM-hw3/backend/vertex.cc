@@ -15,7 +15,7 @@ Vertex::Vertex(int num_dimension, int local_dimension) {
 //              << " local_dimension: " << local_dimension << " id_: " << id_ << std::endl;
 }
 
-Vertex::~Vertex() {}
+Vertex::~Vertex() {}   
 
 int Vertex::Dimension() const {
     return parameters_.rows();

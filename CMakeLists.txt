@@ -20,10 +20,13 @@ find_package(OpenCV REQUIRED)
 message(WARNING "OpenCV_VERSION: ${OpenCV_VERSION}")
 find_package(Ceres REQUIRED)
 
+
+
 include_directories(${catkin_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS})
 
 include_directories(
     inclue 
+    vio_LM-hw3
     ${catkin_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIR}
 )
@@ -35,7 +38,12 @@ add_executable(homework_1
     )
 
 
-target_link_libraries(homework_1 ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES}) 
+target_link_libraries(homework_1 
+${catkin_LIBRARIES} 
+${OpenCV_LIBS} 
+${CERES_LIBRARIES}
+
+) 
 
 # 添加子目录
 add_subdirectory(vio_data_simulation-hw2)
