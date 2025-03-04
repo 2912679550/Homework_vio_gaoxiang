@@ -1,6 +1,8 @@
 #include <iostream>
 #include <random>
 #include "backend/problem.h"
+#include <mgl2/fltk.h>
+#include <vector>
 
 using namespace myslam::backend;
 using namespace std;
@@ -13,7 +15,7 @@ public:
 
     CurveFittingVertex(): Vertex(3) {}  // abc: 三个参数， Vertex 是 3 维的
     virtual std::string TypeInfo() const { return "abc"; }
-};
+}; 
 
 // 误差模型 模板参数：观测值维度，类型，连接顶点类型
 class CurveFittingEdge: public Edge
@@ -85,13 +87,33 @@ int main()
 
     std::cout<<"\nTest CurveFitting start..."<<std::endl;
     // TODO 使用 LM 求解
-    problem.Solve(30);
+    problem.Solve(60);
 
     std::cout << "-------After optimization, we got these parameters :" << std::endl;
     std::cout << vertex->Parameters().transpose() << std::endl;
     std::cout << "-------ground truth: " << std::endl;
     std::cout << "1.0,  2.0,  1.0" << std::endl;
 
+    // todo 画图
+    std::vector<double> x_data;
+    mglFLTK gr;
+    // x轴为lambda的标号，y轴为lambda的值
+    for (int i = 0; i < problem.lambdas.size(); ++i) {
+        x_data.push_back(i);
+    }
+    mglData x_mgl(x_data.size(), &x_data[0]);
+    mglData y_fit_mgl(problem.lambdas.size(), &problem.lambdas[0]);
+
+    // 调整x轴刻度范围为1到10，每隔1显示一个刻度
+    gr.SetRanges(0, problem.lambdas.size(), 0, 20); // 必须在Plot与axis之前设置
+    gr.Axis();
+    gr.Plot(x_mgl, y_fit_mgl, "r");
+    gr.SetTicks('x', 1, 0);
+    gr.Label('x', "x", 0);
+    gr.Label('y', "lambda", 0);
+    // gr.Title("Curve Fitting");
+    gr.Legend(2);
+    gr.Run();
     // std
     return 0;
 }

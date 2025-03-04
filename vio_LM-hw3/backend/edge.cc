@@ -65,7 +65,7 @@ namespace myslam
                 }
                 */
             return true;
-        }
+        } 
 
     }
 }

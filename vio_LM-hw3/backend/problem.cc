@@ -71,7 +71,8 @@ namespace myslam
 
         bool Problem::Solve(int iterations)
         {
-
+            lambdas.clear();   
+            
             if (edges_.size() == 0 || verticies_.size() == 0)
             {
                 std::cerr << "\nCannot solve problem without edges or verticies" << std::endl;
@@ -81,6 +82,7 @@ namespace myslam
             TicToc t_solve;
             // 统计优化变量的维数，为构建 H 矩阵做准备
             SetOrdering();
+            std::cout << "Problem Total ordering_generic: " << ordering_generic_ << std::endl;
             // 遍历edge, 构建 H = J^T * J 矩阵，LM法中使用J^T * J + \lambda I来近似H
             MakeHessian();
             // LM 初始化
@@ -92,12 +94,14 @@ namespace myslam
             {
                 std::cout << "iter: " << iter << " , chi= " << currentChi_ << " , Lambda= " << currentLambda_
                           << std::endl;
+                // 存储lambda
+                lambdas.push_back(currentLambda_);
                 bool oneStepSuccess = false;
                 int false_cnt = 0;
                 while (!oneStepSuccess) // 不断尝试 Lambda, 直到成功迭代一步
                 {
                     // setLambda
-                    AddLambdatoHessianLM();
+                    AddLambdatoHessianLM();  // 将LM算法的lambda加到对角线上
                     // 第四步，解线性方程 H X = B
                     SolveLinearSystem();
                     //
@@ -166,8 +170,8 @@ namespace myslam
             TicToc t_h;
             // 直接构造大的 H 矩阵
             ulong size = ordering_generic_;
-            MatXX H(MatXX::Zero(size, size));
-            VecX b(VecX::Zero(size));
+            MatXX H(MatXX::Zero(size, size));   // Hessian = J^T * J + \lambda I in LM
+            VecX b(VecX::Zero(size));   // b = - J^T * r
 
             // TODO:: accelate, accelate, accelate
             // #ifdef USE_OPENMP
@@ -177,6 +181,7 @@ namespace myslam
             // 遍历每个残差，并计算他们的雅克比，得到最后的 H = J^T * J
             for (auto &edge : edges_)
             {
+                // edge是一个pair，first是边的id，second是边的指针
                 edge.second->ComputeResidual();
                 edge.second->ComputeJacobians();
 
@@ -294,7 +299,7 @@ namespace myslam
             assert(Hessian_.rows() == Hessian_.cols() && "Hessian is not square");
             for (ulong i = 0; i < size; ++i)
             {
-                Hessian_(i, i) += currentLambda_;
+                Hessian_(i, i) += currentLambda_;   // 相当于 H = H + \lambda I，将对角线上的元素加上 lambda
             }
         }
 
@@ -309,6 +314,40 @@ namespace myslam
             }
         }
 
+        // // bool Problem::IsGoodStepInLM()
+        // // {
+        // //     double scale = 0;
+        // //     scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+        // //     scale += 1e-3; // make sure it's non-zero :)    // 
+        // //     // recompute residuals after update state
+        // //     // 统计所有的残差
+        // //     double tempChi = 0.0;
+        // //     for (auto edge : edges_)
+        // //     {
+        // //         edge.second->ComputeResidual();
+        // //         tempChi += edge.second->Chi2();
+        // //     }   // 
+        // //     // Nielson方法
+        // //     double rho = (currentChi_ - tempChi) / scale;
+        // //     if (rho > 0 && isfinite(tempChi)) // last step was good, 误差在下降
+        // //     {
+        // //         double alpha = 1. - pow((2 * rho - 1), 3);
+        // //         alpha = std::min(alpha, 2. / 3.);
+        // //         double scaleFactor = (std::max)(1. / 3., alpha);
+        // //         currentLambda_ *= scaleFactor;
+        // //         ni_ = 2;
+        // //         currentChi_ = tempChi;
+        // //         return true;
+        // //     }
+        // //     else
+        // //     {
+        // //         currentLambda_ *= ni_;
+        // //         ni_ *= 2;
+        // //         return false;
+        // //     }
+        // // }
+
+        // todo 论文中的第二种方法 from：https://blog.csdn.net/qq_37340588/article/details/107494444
         bool Problem::IsGoodStepInLM()
         {
             double scale = 0;
@@ -324,23 +363,36 @@ namespace myslam
                 tempChi += edge.second->Chi2();
             }
 
+            //回退
+            RollbackStates();
+
+            //计算alpha
+            VecX tempDelta = delta_x_;
+            double alpha_ = b_.transpose() * delta_x_;
+            alpha_ /= (tempChi-currentChi_)/2 + 2*b_.transpose()*delta_x_;
+            alpha_ += 1e-1;
+            delta_x_ = delta_x_ * alpha_;
+            UpdateStates();
+
+            tempChi = 0.0;
+            for (auto edge: edges_) {
+                edge.second->ComputeResidual();
+                tempChi += edge.second->Chi2();
+            }
+            scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+            scale += 1e-3;    // make sure it's non-zero :)
+            
             double rho = (currentChi_ - tempChi) / scale;
-            if (rho > 0 && isfinite(tempChi)) // last step was good, 误差在下降
+            if (rho > 0 && isfinite(tempChi))   // last step was good, 误差在下降
             {
-                double alpha = 1. - pow((2 * rho - 1), 3);
-                alpha = std::min(alpha, 2. / 3.);
-                double scaleFactor = (std::max)(1. / 3., alpha);
-                currentLambda_ *= scaleFactor;
-                ni_ = 2;
+                currentLambda_ = max(currentLambda_/(1+alpha_),1e-7);
                 currentChi_ = tempChi;
                 return true;
-            }
-            else
-            {
-                currentLambda_ *= ni_;
-                ni_ *= 2;
+            } else {
+                currentLambda_ += abs(tempChi-currentChi_)/(2*alpha_);
                 return false;
             }
+
         }
 
         /** @brief conjugate gradient with perconditioning

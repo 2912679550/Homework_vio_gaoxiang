@@ -78,6 +78,9 @@ namespace myslam
             // test compute prior
             void TestComputePrior();
 
+            // todo 存储阻尼因子
+            std::vector<double> lambdas;
+
         private:
             /// Solve的实现，解通用问题
             bool SolveGenericProblem(int iterations);

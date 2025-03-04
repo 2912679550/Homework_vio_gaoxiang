@@ -22,6 +22,7 @@ find_package(Ceres REQUIRED)
 
 
 
+
 include_directories(${catkin_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS})
 
 include_directories(

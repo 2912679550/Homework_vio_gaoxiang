@@ -1,6 +1,7 @@
 #include <iostream>
 #include <random>
 #include "backend/problem.h"
+#include <mgl2/fltk.h>
 
 using namespace myslam::backend;
 using namespace std;
@@ -93,6 +94,29 @@ int main()
     std::cout << "-------ground truth: " << std::endl;
     std::cout << "1.0,  2.0,  1.0" << std::endl;
 
+    // todo 画图
+    std::vector<double> x_data;
+    mglFLTK gr;
+    // x轴为lambda的标号，y轴为lambda的值
+    float max_lambda = 0;
+    for (int i = 0; i < problem.lambdas.size(); ++i) {
+        x_data.push_back(i);
+        max_lambda = max_lambda>problem.lambdas[i] ? max_lambda : problem.lambdas[i];
+    }
+    mglData x_mgl(x_data.size(), &x_data[0]);
+    mglData y_fit_mgl(problem.lambdas.size(), &problem.lambdas[0]);
+
+    // 调整x轴刻度范围为1到10，每隔1显示一个刻度
+    gr.SetRanges(0, x_data.size(), 0, max_lambda*1.05); // 必须在Plot与axis之前设置
+    gr.Axis();
+    gr.Plot(x_mgl, y_fit_mgl, "r");
+    // gr.Spline(x_mgl, y_fit_mgl, "r"); // 使用 Spline 绘制平滑曲线
+    gr.SetTicks('x', 1, 0);
+    gr.Label('x', "x", 0);
+    gr.Label('y', "lambda", 0);
+    // gr.Title("Curve Fitting");
+    gr.Legend(2);
+    gr.Run();
     // std
     return 0;
 }
