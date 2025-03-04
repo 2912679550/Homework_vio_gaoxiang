@@ -2,6 +2,7 @@
 #include <random>
 #include "backend/problem.h"
 #include <mgl2/fltk.h>
+#include <vector>
 
 using namespace myslam::backend;
 using namespace std;
@@ -14,7 +15,7 @@ public:
 
     CurveFittingVertex(): Vertex(3) {}  // abc: 三个参数， Vertex 是 3 维的
     virtual std::string TypeInfo() const { return "abc"; }
-};
+}; 
 
 // 误差模型 模板参数：观测值维度，类型，连接顶点类型
 class CurveFittingEdge: public Edge
@@ -29,17 +30,16 @@ public:
     virtual void ComputeResidual() override
     {
         Vec3 abc = verticies_[0]->Parameters();  // 估计的参数
-        residual_(0) = std::exp( abc(0)*x_*x_ + abc(1)*x_ + abc(2) ) - y_;  // 构建残差
+        residual_(0) =  abc(0)*x_*x_ + abc(1)*x_ + abc(2)  - y_;  // 构建残差
     }
 
     // 计算残差对变量的雅克比
     virtual void ComputeJacobians() override
     {
         Vec3 abc = verticies_[0]->Parameters();
-        double exp_y = std::exp( abc(0)*x_*x_ + abc(1)*x_ + abc(2) );
 
         Eigen::Matrix<double, 1, 3> jaco_abc;  // 误差为1维，状态量 3 个，所以是 1x3 的雅克比矩阵
-        jaco_abc << x_ * x_ * exp_y, x_ * exp_y , 1 * exp_y;
+        jaco_abc << x_ * x_ , x_  , 1 ;
         jacobians_[0] = jaco_abc;
     }
     /// 返回边的类型信息
@@ -51,7 +51,7 @@ public:
 int main()
 {
     double a=1.0, b=2.0, c=1.0;         // 真实参数值
-    int N = 100;                          // 数据点
+    int N = 1000;                          // 数据点
     double w_sigma= 1.;                 // 噪声Sigma值
 
     std::default_random_engine generator;
@@ -72,7 +72,7 @@ int main()
         double x = i/100.;
         double n = noise(generator);
         // 观测 y
-        double y = std::exp( a*x*x + b*x + c ) + n;
+        double y = a*x*x + b*x + c  + n;
 //        double y = std::exp( a*x*x + b*x + c );
 
         // 每个观测对应的残差函数
@@ -87,7 +87,7 @@ int main()
 
     std::cout<<"\nTest CurveFitting start..."<<std::endl;
     // TODO 使用 LM 求解
-    problem.Solve(30);
+    problem.Solve(60);
 
     std::cout << "-------After optimization, we got these parameters :" << std::endl;
     std::cout << vertex->Parameters().transpose() << std::endl;
@@ -98,19 +98,16 @@ int main()
     std::vector<double> x_data;
     mglFLTK gr;
     // x轴为lambda的标号，y轴为lambda的值
-    float max_lambda = 0;
     for (int i = 0; i < problem.lambdas.size(); ++i) {
         x_data.push_back(i);
-        max_lambda = max_lambda>problem.lambdas[i] ? max_lambda : problem.lambdas[i];
     }
     mglData x_mgl(x_data.size(), &x_data[0]);
     mglData y_fit_mgl(problem.lambdas.size(), &problem.lambdas[0]);
 
     // 调整x轴刻度范围为1到10，每隔1显示一个刻度
-    gr.SetRanges(0, x_data.size(), 0, max_lambda*1.05); // 必须在Plot与axis之前设置
+    gr.SetRanges(0, problem.lambdas.size(), 0, 20); // 必须在Plot与axis之前设置
     gr.Axis();
     gr.Plot(x_mgl, y_fit_mgl, "r");
-    // gr.Spline(x_mgl, y_fit_mgl, "r"); // 使用 Spline 绘制平滑曲线
     gr.SetTicks('x', 1, 0);
     gr.Label('x', "x", 0);
     gr.Label('y', "lambda", 0);

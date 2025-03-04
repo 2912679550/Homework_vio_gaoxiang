@@ -7,10 +7,17 @@
     ],
     "files.associations": {
         "ostream": "cpp",
+<<<<<<< HEAD
         "cctype": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
         "csignal": "cpp",
+=======
+        "iostream": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+>>>>>>> d9fbfd5dad2e2c6c0e419d411f789a79d7927514
         "cstdarg": "cpp",
         "cstddef": "cpp",
         "cstdio": "cpp",
@@ -57,7 +64,10 @@
         "initializer_list": "cpp",
         "iomanip": "cpp",
         "iosfwd": "cpp",
+<<<<<<< HEAD
         "iostream": "cpp",
+=======
+>>>>>>> d9fbfd5dad2e2c6c0e419d411f789a79d7927514
         "istream": "cpp",
         "limits": "cpp",
         "mutex": "cpp",

@@ -8,8 +8,8 @@
       "includePath": [
         "/opt/ros/noetic/include/**",
         "${workspaceFolder}/include/**",
-        "${workspaceFolder}/vio_LM-hw3/**",
-        "/usr/include/**"
+        "${workspaceFolder}/vio_LM-hw3",
+        "/usr/include/eigen3"
       ],
       "name": "ROS",
       "intelliSenseMode": "gcc-x64",

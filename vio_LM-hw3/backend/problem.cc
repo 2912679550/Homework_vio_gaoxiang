@@ -1,7 +1,10 @@
+// #define GOOGLE_GLOG_DLL_DECL
+// #include <glog/logging.h>
 #include <iostream>
 #include <fstream>
 #include <eigen3/Eigen/Dense>
-#include <glog/logging.h>
+#include <glob.h>
+
 #include "backend/problem.h"
 #include "utils/tic_toc.h"
 
@@ -26,7 +29,7 @@ namespace myslam
 
         Problem::Problem(ProblemType problemType) : problemType_(problemType)
         {
-            LogoutVectorSize();
+            LogoutVectorSize(); // ???? 
             verticies_marg_.clear();
         }
 
@@ -68,7 +71,8 @@ namespace myslam
 
         bool Problem::Solve(int iterations)
         {
-
+            lambdas.clear();   
+            
             if (edges_.size() == 0 || verticies_.size() == 0)
             {
                 std::cerr << "\nCannot solve problem without edges or verticies" << std::endl;
@@ -78,7 +82,8 @@ namespace myslam
             TicToc t_solve;
             // ????????????? H ?????
             SetOrdering();
-            // ??edge, ?? H = J^T * J ??
+            std::cout << "Problem Total ordering_generic: " << ordering_generic_ << std::endl;
+            // ??edge, ?? H = J^T * J ???LM????J^T * J + \lambda I???H
             MakeHessian();
             // LM ???
             ComputeLambdaInitLM();
@@ -89,12 +94,14 @@ namespace myslam
             {
                 std::cout << "iter: " << iter << " , chi= " << currentChi_ << " , Lambda= " << currentLambda_
                           << std::endl;
+                // ??lambda
+                lambdas.push_back(currentLambda_);
                 bool oneStepSuccess = false;
                 int false_cnt = 0;
                 while (!oneStepSuccess) // ???? Lambda, ????????
                 {
                     // setLambda
-                    AddLambdatoHessianLM();
+                    AddLambdatoHessianLM();  // ?LM???lambda??????
                     // ????????? H X = B
                     SolveLinearSystem();
                     //
@@ -163,8 +170,8 @@ namespace myslam
             TicToc t_h;
             // ?????? H ??
             ulong size = ordering_generic_;
-            MatXX H(MatXX::Zero(size, size));
-            VecX b(VecX::Zero(size));
+            MatXX H(MatXX::Zero(size, size));   // Hessian = J^T * J + \lambda I in LM
+            VecX b(VecX::Zero(size));   // b = - J^T * r
 
             // TODO:: accelate, accelate, accelate
             // #ifdef USE_OPENMP
@@ -174,7 +181,7 @@ namespace myslam
             // ?????????????????????? H = J^T * J
             for (auto &edge : edges_)
             {
-
+                // edge???pair?first???id?second?????
                 edge.second->ComputeResidual();
                 edge.second->ComputeJacobians();
 
@@ -292,7 +299,7 @@ namespace myslam
             assert(Hessian_.rows() == Hessian_.cols() && "Hessian is not square");
             for (ulong i = 0; i < size; ++i)
             {
-                Hessian_(i, i) += currentLambda_;
+                Hessian_(i, i) += currentLambda_;   // ??? H = H + \lambda I??????????? lambda
             }
         }
 
@@ -307,6 +314,40 @@ namespace myslam
             }
         }
 
+        // // bool Problem::IsGoodStepInLM()
+        // // {
+        // //     double scale = 0;
+        // //     scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+        // //     scale += 1e-3; // make sure it's non-zero :)    // 
+        // //     // recompute residuals after update state
+        // //     // ???????
+        // //     double tempChi = 0.0;
+        // //     for (auto edge : edges_)
+        // //     {
+        // //         edge.second->ComputeResidual();
+        // //         tempChi += edge.second->Chi2();
+        // //     }   // 
+        // //     // Nielson??
+        // //     double rho = (currentChi_ - tempChi) / scale;
+        // //     if (rho > 0 && isfinite(tempChi)) // last step was good, ?????
+        // //     {
+        // //         double alpha = 1. - pow((2 * rho - 1), 3);
+        // //         alpha = std::min(alpha, 2. / 3.);
+        // //         double scaleFactor = (std::max)(1. / 3., alpha);
+        // //         currentLambda_ *= scaleFactor;
+        // //         ni_ = 2;
+        // //         currentChi_ = tempChi;
+        // //         return true;
+        // //     }
+        // //     else
+        // //     {
+        // //         currentLambda_ *= ni_;
+        // //         ni_ *= 2;
+        // //         return false;
+        // //     }
+        // // }
+
+        // todo ????????? from?https://blog.csdn.net/qq_37340588/article/details/107494444
         bool Problem::IsGoodStepInLM()
         {
             double scale = 0;
@@ -322,23 +363,36 @@ namespace myslam
                 tempChi += edge.second->Chi2();
             }
 
+            //??
+            RollbackStates();
+
+            //??alpha
+            VecX tempDelta = delta_x_;
+            double alpha_ = b_.transpose() * delta_x_;
+            alpha_ /= (tempChi-currentChi_)/2 + 2*b_.transpose()*delta_x_;
+            alpha_ += 1e-1;
+            delta_x_ = delta_x_ * alpha_;
+            UpdateStates();
+
+            tempChi = 0.0;
+            for (auto edge: edges_) {
+                edge.second->ComputeResidual();
+                tempChi += edge.second->Chi2();
+            }
+            scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+            scale += 1e-3;    // make sure it's non-zero :)
+            
             double rho = (currentChi_ - tempChi) / scale;
-            if (rho > 0 && isfinite(tempChi)) // last step was good, ?????
+            if (rho > 0 && isfinite(tempChi))   // last step was good, ?????
             {
-                double alpha = 1. - pow((2 * rho - 1), 3);
-                alpha = std::min(alpha, 2. / 3.);
-                double scaleFactor = (std::max)(1. / 3., alpha);
-                currentLambda_ *= scaleFactor;
-                ni_ = 2;
+                currentLambda_ = max(currentLambda_/(1+alpha_),1e-7);
                 currentChi_ = tempChi;
                 return true;
-            }
-            else
-            {
-                currentLambda_ *= ni_;
-                ni_ *= 2;
+            } else {
+                currentLambda_ += abs(tempChi-currentChi_)/(2*alpha_);
                 return false;
             }
+
         }
 
         /** @brief conjugate gradient with perconditioning
