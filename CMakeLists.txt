@@ -49,6 +49,7 @@ ${CERES_LIBRARIES}
 # 添加子目录
 add_subdirectory(vio_data_simulation-hw2)
 add_subdirectory(vio_LM-hw3)
+add_subdirectory(vio_hw4)
 
 
 ## Declare a C++ library
