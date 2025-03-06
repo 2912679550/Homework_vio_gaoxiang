@@ -81,8 +81,9 @@ int main() {
         pose << cameras[i].twc, cameras[i].qwc.x(), cameras[i].qwc.y(), cameras[i].qwc.z(), cameras[i].qwc.w();
         vertexCam->SetParameters(pose);
 
-        // if(i < 2)
-        // vertexCam->SetFixed();
+        // 将前两帧固定
+        if(i < 2)
+        vertexCam->SetFixed();
 
         problem.AddVertex(vertexCam);
         vertexCams_vec.push_back(vertexCam);
@@ -138,7 +139,8 @@ int main() {
     }
     std::cout<<"------------ pose translation ----------------"<<std::endl;
     for (int i = 0; i < vertexCams_vec.size(); ++i) {
-        std::cout<<"translation after opt: "<< i <<" :"<< vertexCams_vec[i]->Parameters().head(3).transpose() << " || gt: "<<cameras[i].twc.transpose()<<std::endl;
+        std::cout   <<"translation after opt: "<< i <<" :"<< vertexCams_vec[i]->Parameters().head(3).transpose() << "\n"
+                    << "\t\t|| ori: "<<cameras[i].twc.transpose()<<std::endl;
     }
     /// 优化完成后，第一帧相机的 pose 平移（x,y,z）不再是原点 0,0,0. 说明向零空间发生了漂移。
     /// 解决办法： fix 第一帧和第二帧，固定 7 自由度。 或者加上非常大的先验值。

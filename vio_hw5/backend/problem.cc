@@ -586,8 +586,11 @@ void Problem::TestMarginalize() {
     // 将 row i 移动矩阵最下面
     Eigen::MatrixXd temp_rows = H_marg.block(idx, 0, dim, reserve_size);
     Eigen::MatrixXd temp_botRows = H_marg.block(idx + dim, 0, reserve_size - idx - dim, reserve_size);
-    // H_marg.block(?,?,?,?) = temp_botRows;
-    // H_marg.block(?,?,?,?) = temp_rows;
+    // ! :: home work. 完成矩阵块的移动
+    H_marg.block(idx+dim , 0 , dim, reserve_size) = temp_rows;
+    H_marg.block(idx, 0, reserve_size - idx - dim, reserve_size) = temp_botRows;
+    // ! home work end
+
 
     // 将 col i 移动矩阵最右边
     Eigen::MatrixXd temp_cols = H_marg.block(0, idx, reserve_size, dim);
@@ -609,16 +612,18 @@ void Problem::TestMarginalize() {
             (saes.eigenvalues().array() > eps).select(saes.eigenvalues().array().inverse(), 0)).asDiagonal() *
                               saes.eigenvectors().transpose();
 
-    // TODO:: home work. 完成舒尔补操作
-    //Eigen::MatrixXd Arm = H_marg.block(?,?,?,?);
-    //Eigen::MatrixXd Amr = H_marg.block(?,?,?,?);
-    //Eigen::MatrixXd Arr = H_marg.block(?,?,?,?);
+    // !:: home work. 完成舒尔补操作
+    Eigen::MatrixXd Arm = H_marg.block(0, n2, n2, m2);
+    Eigen::MatrixXd Amr = H_marg.block(n2, 0, dim, n2);
+    Eigen::MatrixXd Arr = H_marg.block(0, 0, n2, n2);
+    // ! end
 
-    // Eigen::MatrixXd tempB = Arm * Amm_inv;
-    // Eigen::MatrixXd H_prior = Arr - tempB * Amr;
+
+    Eigen::MatrixXd tempB = Arm * Amm_inv;
+    Eigen::MatrixXd H_prior = Arr - tempB * Amr;
 
     std::cout << "---------- TEST Marg: after marg------------"<< std::endl;
-    // std::cout << H_prior << std::endl;
+    std::cout << H_prior << std::endl;
 }
 
 }
