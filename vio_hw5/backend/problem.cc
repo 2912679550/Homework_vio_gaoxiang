@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <eigen3/Eigen/Dense>
+#define GLOG_USE_GLOG_EXPORT
 #include <glog/logging.h>
 #include "backend/problem.h"
 #include "utils/tic_toc.h"
@@ -66,12 +67,13 @@ void Problem::AddOrderingSLAM(std::shared_ptr<myslam::backend::Vertex> v) {
 }
 
 void Problem::ResizePoseHessiansWhenAddingPose(shared_ptr<Vertex> v) {
-
-    int size = H_prior_.rows() + v->LocalDimension();
+    // 这段代码的作用就是当新加入一个Pose时，Hessian矩阵的维数要增加，同时要保持原来的数据不变
+    // 相当于就是方阵部分往右和往下各进行扩维。
+    int size = H_prior_.rows() + v->LocalDimension();   // 
     H_prior_.conservativeResize(size, size);
     b_prior_.conservativeResize(size);
 
-    b_prior_.tail(v->LocalDimension()).setZero();
+    b_prior_.tail(v->LocalDimension()).setZero();   // b的维数也需要增加
     H_prior_.rightCols(v->LocalDimension()).setZero();
     H_prior_.bottomRows(v->LocalDimension()).setZero();
 
@@ -252,13 +254,13 @@ void Problem::SetOrdering() {
         // 这里要把 landmark 的 ordering 加上 pose 的数量，就保持了 landmark 在后,而 pose 在前
         ulong all_pose_dimension = ordering_poses_;
         for (auto landmarkVertex : idx_landmark_vertices_) {
+            // 设置landmark在矩阵中的位置OrderingId
             landmarkVertex.second->SetOrderingId(
                 landmarkVertex.second->OrderingId() + all_pose_dimension
             );
         }
     }
-
-//    CHECK_EQ(CheckOrdering(), true);
+    std::cout << "Ordering finished , total ordering_generic_: " << ordering_generic_  << std::endl;
 }
 
 bool Problem::CheckOrdering() {
@@ -290,7 +292,7 @@ void Problem::MakeHessian() {
         edge.second->ComputeJacobians();
 
         auto jacobians = edge.second->Jacobians();
-        auto verticies = edge.second->Verticies();
+        auto verticies = edge.second->Verticies(); // verticies包含了这条边所有的顶点
         assert(jacobians.size() == verticies.size());
         for (size_t i = 0; i < verticies.size(); ++i) {
             auto v_i = verticies[i];
@@ -313,12 +315,16 @@ void Problem::MakeHessian() {
                 assert(v_j->OrderingId() != -1);
                 MatXX hessian = JtW * jacobian_j;
                 // 所有的信息矩阵叠加起来
-                // TODO:: home work. 完成 H index 的填写.
-                // H.block(?,?, ?, ?).noalias() += hessian;
+                
+                // !:: home work. 完成 H index 的填写.
+                H.block(index_i, index_j, dim_i, dim_j).noalias() += hessian;
+                // ! home work end
+                
                 if (j != i) {
                     // 对称的下三角
-		    // TODO:: home work. 完成 H index 的填写.
-                    // H.block(?,?, ?, ?).noalias() += hessian.transpose();
+		            // !:: home work. 完成 H index 的填写.
+                    H.block(index_j, index_i, dim_j, dim_i).noalias() += hessian.transpose();
+                    // ! home work end
                 }
             }
             b.segment(index_i, dim_i).noalias() -= JtW * edge.second->Residual();
@@ -366,12 +372,14 @@ void Problem::SolveLinearSystem() {
         int reserve_size = ordering_poses_;
         int marg_size = ordering_landmarks_;
 
-        // TODO:: home work. 完成矩阵块取值，Hmm，Hpm，Hmp，bpp，bmm
-        // MatXX Hmm = Hessian_.block(?,?, ?, ?);
-        // MatXX Hpm = Hessian_.block(?,?, ?, ?);
-        // MatXX Hmp = Hessian_.block(?,?, ?, ?);
-        // VecX bpp = b_.segment(?,?);
-        // VecX bmm = b_.segment(?,?);
+        // ! :: home work. 完成矩阵块取值，Hmm，Hpm，Hmp，bpp，bmm
+        MatXX Hmm = Hessian_.block(ordering_poses_, ordering_poses_ ,ordering_landmarks_, ordering_landmarks_);
+        MatXX Hpm = Hessian_.block(0, ordering_poses_, ordering_poses_, ordering_landmarks_);
+        MatXX Hmp = Hessian_.block(ordering_poses_, 0, ordering_landmarks_, ordering_poses_);
+        VecX bpp = b_.segment(0, ordering_poses_);
+        VecX bmm = b_.segment(ordering_poses_, ordering_landmarks_);
+        // ! home work end
+
 
         // Hmm 是对角线矩阵，它的求逆可以直接为对角线块分别求逆，如果是逆深度，对角线块为1维的，则直接为对角线的倒数，这里可以加速
         MatXX Hmm_inv(MatXX::Zero(marg_size, marg_size));
@@ -381,10 +389,11 @@ void Problem::SolveLinearSystem() {
             Hmm_inv.block(idx, idx, size, size) = Hmm.block(idx, idx, size, size).inverse();
         }
 
-        // TODO:: home work. 完成舒尔补 Hpp, bpp 代码
+        // ! :: home work. 完成舒尔补 Hpp, bpp 代码
         MatXX tempH = Hpm * Hmm_inv;
-        // H_pp_schur_ = Hessian_.block(?,?,?,?) - tempH * Hmp;
-        // b_pp_schur_ = bpp - ? * ?;
+        H_pp_schur_ = Hessian_.block(0 , 0 , ordering_poses_ , ordering_poses_) - tempH * Hmp;
+        b_pp_schur_ = bpp - tempH * bmm;
+        // ! home work end
 
         // step2: solve Hpp * delta_x = bpp
         VecX delta_x_pp(VecX::Zero(reserve_size));
@@ -398,11 +407,11 @@ void Problem::SolveLinearSystem() {
         delta_x_.head(reserve_size) = delta_x_pp;
         //        std::cout << delta_x_pp.transpose() << std::endl;
 
-        // TODO:: home work. step3: solve landmark
+        // ! :: home work. step3: solve landmark
         VecX delta_x_ll(marg_size);
-        // delta_x_ll = ???;
+        delta_x_ll = Hmm_inv * (bmm - Hmp * delta_x_pp);
         delta_x_.tail(marg_size) = delta_x_ll;
-
+        // ! home work end
     }
 
 }
@@ -605,11 +614,11 @@ void Problem::TestMarginalize() {
     //Eigen::MatrixXd Amr = H_marg.block(?,?,?,?);
     //Eigen::MatrixXd Arr = H_marg.block(?,?,?,?);
 
-    Eigen::MatrixXd tempB = Arm * Amm_inv;
-    Eigen::MatrixXd H_prior = Arr - tempB * Amr;
+    // Eigen::MatrixXd tempB = Arm * Amm_inv;
+    // Eigen::MatrixXd H_prior = Arr - tempB * Amr;
 
     std::cout << "---------- TEST Marg: after marg------------"<< std::endl;
-    std::cout << H_prior << std::endl;
+    // std::cout << H_prior << std::endl;
 }
 
 }

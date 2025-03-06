@@ -8,8 +8,9 @@
       "includePath": [
         "/opt/ros/noetic/include/**",
         "${workspaceFolder}/include/**",
-        "${workspaceFolder}/vio_LM-hw3",
+        "${workspaceFolder}/vio_hw5",
         "/usr/include/eigen3",
+        "/usr/local/include",
         "/usr/include"
       ],
       "name": "ROS",

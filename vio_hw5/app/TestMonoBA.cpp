@@ -27,6 +27,7 @@ void GetSimDataInWordFrame(vector<Frame> &cameraPoses, vector<Eigen::Vector3d> &
     int featureNums = 20;  // 特征数目，假设每帧都能观测到所有的特征
     int poseNums = 3;     // 相机数目
 
+    // todo 先生成三个相机的位姿
     double radius = 8;
     for (int n = 0; n < poseNums; ++n) {
         double theta = n * 2 * M_PI / (poseNums * 4); // 1/4 圆弧
@@ -37,13 +38,14 @@ void GetSimDataInWordFrame(vector<Frame> &cameraPoses, vector<Eigen::Vector3d> &
         cameraPoses.push_back(Frame(R, t));
     }
 
-    // 随机数生成三维特征点
+    // todo 随机数生成三维特征点，并将热整点与每一帧的相机投影关系保存
     std::default_random_engine generator;
     std::normal_distribution<double> noise_pdf(0., 1. / 1000.);  // 2pixel / focal
     for (int j = 0; j < featureNums; ++j) {
         std::uniform_real_distribution<double> xy_rand(-4, 4.0);
         std::uniform_real_distribution<double> z_rand(4., 8.);
 
+        // 随机生成特征点的世界坐标
         Eigen::Vector3d Pw(xy_rand(generator), xy_rand(generator), z_rand(generator));
         points.push_back(Pw);
 
@@ -53,13 +55,14 @@ void GetSimDataInWordFrame(vector<Frame> &cameraPoses, vector<Eigen::Vector3d> &
             Pc = Pc / Pc.z();  // 归一化图像平面
             Pc[0] += noise_pdf(generator);
             Pc[1] += noise_pdf(generator);
+            // 这里的j就相当于是特征点的id，Pc表示特征点的归一化坐标
             cameraPoses[i].featurePerId.insert(make_pair(j, Pc));
         }
     }
 }
 
 int main() {
-    // 准备数据
+    // todo 准备数据
     vector<Frame> cameras;
     vector<Eigen::Vector3d> points;
     GetSimDataInWordFrame(cameras, points);
@@ -71,14 +74,15 @@ int main() {
 
     // 所有 Pose
     vector<shared_ptr<VertexPose> > vertexCams_vec;
-    for (size_t i = 0; i < cameras.size(); ++i) {
+    for (size_t i = 0; i < cameras.size(); ++i) 
+    {
         shared_ptr<VertexPose> vertexCam(new VertexPose());
         Eigen::VectorXd pose(7);
         pose << cameras[i].twc, cameras[i].qwc.x(), cameras[i].qwc.y(), cameras[i].qwc.z(), cameras[i].qwc.w();
         vertexCam->SetParameters(pose);
 
-//        if(i < 2)
-//            vertexCam->SetFixed();
+        // if(i < 2)
+        // vertexCam->SetFixed();
 
         problem.AddVertex(vertexCam);
         vertexCams_vec.push_back(vertexCam);
@@ -88,27 +92,28 @@ int main() {
     std::default_random_engine generator;
     std::normal_distribution<double> noise_pdf(0, 1.);
     double noise = 0;
-    vector<double> noise_invd;
-    vector<shared_ptr<VertexInverseDepth> > allPoints;
+    vector<double> noise_invd;  // 存储带有噪声的逆深度
+    vector<shared_ptr<VertexInverseDepth> > allPoints;  // 特征点仅有一个参数，逆深度
     for (size_t i = 0; i < points.size(); ++i) {
         //假设所有特征点的起始帧为第0帧， 逆深度容易得到
         Eigen::Vector3d Pw = points[i];
         Eigen::Vector3d Pc = cameras[0].Rwc.transpose() * (Pw - cameras[0].twc);
         noise = noise_pdf(generator);
         double inverse_depth = 1. / (Pc.z() + noise);
-//        double inverse_depth = 1. / Pc.z();
-        noise_invd.push_back(inverse_depth);
-
         // 初始化特征 vertex
         shared_ptr<VertexInverseDepth> verterxPoint(new VertexInverseDepth());
         VecX inv_d(1);
         inv_d << inverse_depth;
         verterxPoint->SetParameters(inv_d);
         problem.AddVertex(verterxPoint);
-        allPoints.push_back(verterxPoint);
+        noise_invd.push_back(inverse_depth);
+        allPoints.push_back(verterxPoint);  // 截止目前，noise_invd 和 allPoints 一一对应，
+        // 两者一个是数据，一个是优化变量
 
         // 每个特征对应的投影误差, 第 0 帧为起始帧
         for (size_t j = 1; j < cameras.size(); ++j) {
+            // 在筹备问题数据时已经将每个特征点在不同相机帧中的归一化坐标存储在了 Frame 结构体中
+            // 这里相当于将后续的帧与第 0 帧进行特征点的投影误差构建
             Eigen::Vector3d pt_i = cameras[0].featurePerId.find(i)->second;
             Eigen::Vector3d pt_j = cameras[j].featurePerId.find(i)->second;
             shared_ptr<EdgeReprojection> edge(new EdgeReprojection(pt_i, pt_j));
