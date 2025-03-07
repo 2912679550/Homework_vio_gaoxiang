@@ -10,7 +10,7 @@
         "${workspaceFolder}/include/**",
         "${workspaceFolder}/vio_hw5",
         "/usr/include/eigen3",
-        "/usr/local/include",
+        "${workspaceFolder}/vio_hw5/thirdparty/Sophus",
         "/usr/include"
       ],
       "name": "ROS",

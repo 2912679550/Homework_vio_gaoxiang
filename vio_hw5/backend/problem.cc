@@ -353,18 +353,15 @@ void Problem::MakeHessian() {
  * Solve Hx = b, we can use PCG iterative method or use sparse Cholesky
  */
 void Problem::SolveLinearSystem() {
-
     if (problemType_ == ProblemType::GENERIC_PROBLEM) {
-
         // 非 SLAM 问题直接求解
         // PCG solver
         MatXX H = Hessian_;
         for (ulong i = 0; i < Hessian_.cols(); ++i) {
             H(i, i) += currentLambda_;
         }
-//        delta_x_ = PCGSolver(H, b_, H.rows() * 2);
+        // delta_x_ = PCGSolver(H, b_, H.rows() * 2);
         delta_x_ = Hessian_.inverse() * b_;
-
     } else {
 
         // SLAM 问题采用舒尔补的计算方式
@@ -379,7 +376,6 @@ void Problem::SolveLinearSystem() {
         VecX bpp = b_.segment(0, ordering_poses_);
         VecX bmm = b_.segment(ordering_poses_, ordering_landmarks_);
         // ! home work end
-
 
         // Hmm 是对角线矩阵，它的求逆可以直接为对角线块分别求逆，如果是逆深度，对角线块为1维的，则直接为对角线的倒数，这里可以加速
         MatXX Hmm_inv(MatXX::Zero(marg_size, marg_size));
@@ -413,7 +409,6 @@ void Problem::SolveLinearSystem() {
         delta_x_.tail(marg_size) = delta_x_ll;
         // ! home work end
     }
-
 }
 
 void Problem::UpdateStates() {

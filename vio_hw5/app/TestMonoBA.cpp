@@ -82,8 +82,8 @@ int main() {
         vertexCam->SetParameters(pose);
 
         // 将前两帧固定
-        if(i < 2)
-        vertexCam->SetFixed();
+        // if(i < 2)
+        // vertexCam->SetFixed();
 
         problem.AddVertex(vertexCam);
         vertexCams_vec.push_back(vertexCam);
