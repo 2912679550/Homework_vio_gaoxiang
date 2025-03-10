@@ -12,4 +12,4 @@ include_directories(
 )
 
 add_executable(estimate_depth triangulate.cpp)
-#target_link_libraries(estimate_depth  ${Sophus_LIBRARIES})
+target_link_libraries(estimate_depth  ${Sophus_LIBRARIES})

@@ -51,6 +51,7 @@ add_subdirectory(vio_data_simulation-hw2)
 # add_subdirectory(vio_LM-hw3)
 add_subdirectory(vio_hw4)
 add_subdirectory(vio_hw5)
+add_subdirectory(vio_hw6)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
