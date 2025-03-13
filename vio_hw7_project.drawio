@@ -1,0 +1,93 @@
+<mxfile host="65bd71144e">
+    <diagram id="cj_qxYgJ9SrzVCNM29EX" name="类结构图">
+        <mxGraphModel dx="1114" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="42" value="" style="edgeStyle=none;rounded=1;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="12" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="800" y="334" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="47" value="" style="edgeStyle=none;rounded=1;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="12" target="16" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="12" target="55">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;span style=&quot;color: rgb(219, 185, 121); font-family: Verdana; font-size: 13px; white-space-collapse: preserve;&quot;&gt;System&lt;/span&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="140" width="290" height="104" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Item 1：后端线程&amp;nbsp;&amp;nbsp;&lt;span style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space: pre; color: rgb(219, 185, 121);&quot;&gt;System&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space: pre;&quot;&gt;::&lt;/span&gt;&lt;span style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space: pre; color: rgb(97, 175, 239);&quot;&gt;ProcessBackEnd&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space: pre;&quot;&gt;()&lt;/span&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="12" vertex="1">
+                    <mxGeometry y="26" width="290" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Item 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="12" vertex="1">
+                    <mxGeometry y="52" width="290" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Item 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="12" vertex="1">
+                    <mxGeometry y="78" width="290" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="16" target="48">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space-collapse: preserve; line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;Estimator&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;estimator&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="320" width="170" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Item 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="16" vertex="1">
+                    <mxGeometry y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="Item 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="16" vertex="1">
+                    <mxGeometry y="70" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Item 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="16" vertex="1">
+                    <mxGeometry y="100" width="170" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Item 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="16" vertex="1">
+                    <mxGeometry y="126" width="170" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="" style="edgeStyle=none;rounded=1;html=1;" parent="1" source="27" target="33" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space-collapse: preserve; line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;background-color: transparent; color: rgb(219, 185, 121);&quot;&gt;FeatureTracker&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: rgb(187, 187, 187);&quot;&gt; &lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;trackerData&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;[&lt;/span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;NUM_OF_CAM&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;]&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="330" width="170" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="Item 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="27" vertex="1">
+                    <mxGeometry y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="Item 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="27" vertex="1">
+                    <mxGeometry y="70" width="170" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="Item 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="27" vertex="1">
+                    <mxGeometry y="96" width="170" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space-collapse: preserve; line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;camodocal::&lt;/span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;CameraPtr&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;m_camera&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="830" y="570" width="170" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="Item 1:初始化时设置相机参数" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="33" vertex="1">
+                    <mxGeometry y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="Item 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="33" vertex="1">
+                    <mxGeometry y="70" width="170" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="Item 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="33" vertex="1">
+                    <mxGeometry y="96" width="170" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; white-space-collapse: preserve; line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;line-height: 18px; color: rgb(187, 187, 187);&quot;&gt;&lt;div style=&quot;color: rgb(187, 187, 187); line-height: 18px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;FeatureManager&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(187, 187, 187); line-height: 18px;&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;f_manager&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="580" width="170" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="Item 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="48">
+                    <mxGeometry y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="Item 2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="48">
+                    <mxGeometry y="70" width="170" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="Item 3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="48">
+                    <mxGeometry y="96" width="170" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;YaHei Consolas Hybrid&amp;quot;, monospace, &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 13px; line-height: 18px; white-space: pre;&quot;&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;重要的线程锁&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(187, 187, 187), rgb(76, 76, 76));&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;std::&lt;/span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;mutex&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;m_buf&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(187, 187, 187), rgb(76, 76, 76));&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;std::&lt;/span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;mutex&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;m_state&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(187, 187, 187), rgb(76, 76, 76));&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;std::&lt;/span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;mutex&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;i_buf&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: light-dark(rgb(187, 187, 187), rgb(76, 76, 76));&quot;&gt;&lt;span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;std::&lt;/span&gt;&lt;span style=&quot;color: rgb(219, 185, 121);&quot;&gt;mutex&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(222, 124, 132);&quot;&gt;m_estimator&lt;/span&gt;&lt;span style=&quot;color: rgb(187, 187, 187);&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;fontStyle=0;startSize=26;rounded=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="1080" y="131" width="175" height="122" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

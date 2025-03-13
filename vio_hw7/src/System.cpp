@@ -11,10 +11,10 @@ System::System(string sConfig_file_)
 {
     string sConfig_file = sConfig_file_ + "euroc_config.yaml";
 
-    cout << "1 System() sConfig_file: " << sConfig_file << endl;
+    cout << RED_STRING_START <<"1 System() sConfig_file: " << sConfig_file << RESET_STRING << endl;
     readParameters(sConfig_file);
 
-    trackerData[0].readIntrinsicParameter(sConfig_file);
+    trackerData[0].readIntrinsicParameter(sConfig_file);    // 读取配置文件，并通过工厂创建相机
 
     estimator.setParameter();
     ofs_pose.open("./pose_output.txt",fstream::app | fstream::out);
@@ -24,7 +24,7 @@ System::System(string sConfig_file_)
     }
     // thread thd_RunBackend(&System::process,this);
     // thd_RunBackend.detach();
-    cout << "2 System() end" << endl;
+    cout <<RED_STRING_START<< "2 System() end" << RESET_STRING << endl;
 }
 
 System::~System()
@@ -51,14 +51,16 @@ void System::PubImageData(double dStampSec, Mat &img)
 {
     if (!init_feature)
     {
-        cout << "1 PubImageData skip the first detected feature, which doesn't contain optical flow speed" << endl;
+        cout << BLUE_STRING_START << "1 PubImageData skip the first detected feature, which doesn't contain optical flow speed" 
+            << RESET_STRING <<  endl;
         init_feature = 1;
         return;
     }
 
     if (first_image_flag)
     {
-        cout << "2 PubImageData first_image_flag" << endl;
+        cout << BLUE_STRING_START << "2 PubImageData first_image_flag" 
+            << RESET_STRING <<  endl;
         first_image_flag = false;
         first_image_time = dStampSec;
         last_image_time = dStampSec;
@@ -91,8 +93,9 @@ void System::PubImageData(double dStampSec, Mat &img)
     }
 
     TicToc t_r;
-    // cout << "3 PubImageData t : " << dStampSec << endl;
+    cout << "3 PubImageData t : " << dStampSec  <<"\tpub : "<< PUB_THIS_FRAME << endl;
     trackerData[0].readImage(img, dStampSec);
+    std::cout << "readfinished :  " << t_r.toc() << std::endl;
 
     for (unsigned int i = 0;; i++)
     {
@@ -152,6 +155,7 @@ void System::PubImageData(double dStampSec, Mat &img)
 
 #ifdef __linux__
     cv::Mat show_img;
+    std::cout << YELLOW_STRING_START << "Start to show image" << RESET_STRING << std::endl;
 	cv::cvtColor(img, show_img, cv::COLOR_GRAY2RGB);
 	if (SHOW_TRACK)
 	{
@@ -237,26 +241,33 @@ void System::PubImuData(double dStampSec, const Eigen::Vector3d &vGyr,
     //     << " acc: " << imu_msg->linear_acceleration.transpose()
     //     << " gyr: " << imu_msg->angular_velocity.transpose() << endl;
     m_buf.lock();
-    imu_buf.push(imu_msg);
+    imu_buf.push(imu_msg); // !把imu数据放入队列中，最后根据时间戳找对应的imu数据
     // cout << "1 PubImuData t: " << fixed << imu_msg->header 
     //     << " imu_buf size:" << imu_buf.size() << endl;
     m_buf.unlock();
-    con.notify_one();
+    con.notify_one(); // 唤醒
 }
 
 // thread: visual-inertial odometry
 void System::ProcessBackEnd()
 {
-    cout << "1 ProcessBackEnd start" << endl;
+    cout << RED_STRING_START << "1 ProcessBackEnd start"<< RESET_STRING << endl;
     while (bStart_backend)
     {
         // cout << "1 process()" << endl;
-        vector<pair<vector<ImuConstPtr>, ImgConstPtr>> measurements;
+        // measurements为一个pair的容器，可以存储多个pair
+        // 一个pair被设置为：一个IMU数据指针容器 + 一个图像指针
+        // 也即一个measurement是一个图像以及对应的多帧IMU数据
+        vector< pair<vector<ImuConstPtr>, ImgConstPtr> > measurements;
         
         unique_lock<mutex> lk(m_buf);
+        // con是一个条件变量，用于线程间的同步，允许一个或多个线程等待某个条件为真，然后继续执行
+        // 这段代码的作用是通过 getMeasurements()函数返回一个包含IMU数据和图像数据的向量对
+        // 并通过.size()函数测量measurement的大小，如果不为1说明有数据了，就满足了条件，使得线程可以继续进行
         con.wait(lk, [&] {
             return (measurements = getMeasurements()).size() != 0;
         });
+
         if( measurements.size() > 1){
         cout << "1 getMeasurements size: " << measurements.size() 
             << " imu sizes: " << measurements[0].first.size()
@@ -267,13 +278,14 @@ void System::ProcessBackEnd()
         m_estimator.lock();
         for (auto &measurement : measurements)
         {
-            auto img_msg = measurement.second;
+            // * 处理IMU数据批并进行 IMU 预积分
+            auto img_msg = measurement.second;  // pair中的第二个
             double dx = 0, dy = 0, dz = 0, rx = 0, ry = 0, rz = 0;
             for (auto &imu_msg : measurement.first)
             {
                 double t = imu_msg->header;
                 double img_t = img_msg->header + estimator.td;
-                if (t <= img_t)
+                if (t <= img_t) // 说明estimator.td >= 0
                 {
                     if (current_time < 0)
                         current_time = t;
@@ -286,6 +298,7 @@ void System::ProcessBackEnd()
                     rx = imu_msg->angular_velocity.x();
                     ry = imu_msg->angular_velocity.y();
                     rz = imu_msg->angular_velocity.z();
+                    // 送入IMU预积分
                     estimator.processIMU(dt, Vector3d(dx, dy, dz), Vector3d(rx, ry, rz));
                     // printf("1 BackEnd imu: dt:%f a: %f %f %f w: %f %f %f\n",dt, dx, dy, dz, rx, ry, rz);
                 }
@@ -314,21 +327,26 @@ void System::ProcessBackEnd()
             //     << " img_msg->points.size: "<< img_msg->points.size() << endl;
 
             // TicToc t_s;
-            map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> image;
+            map< int, 
+            vector<
+                pair<
+                    int, 
+                    Eigen::Matrix<double, 7, 1>
+            >>> image;
             for (unsigned int i = 0; i < img_msg->points.size(); i++) 
             {
                 int v = img_msg->id_of_point[i] + 0.5;
                 int feature_id = v / NUM_OF_CAM;
                 int camera_id = v % NUM_OF_CAM;
-                double x = img_msg->points[i].x();
+                double x = img_msg->points[i].x();   // 3D点的坐标
                 double y = img_msg->points[i].y();
                 double z = img_msg->points[i].z();
-                double p_u = img_msg->u_of_point[i];
+                double p_u = img_msg->u_of_point[i];    // 2D点的坐标(像素坐标)
                 double p_v = img_msg->v_of_point[i];
-                double velocity_x = img_msg->velocity_x_of_point[i];
-                double velocity_y = img_msg->velocity_y_of_point[i];
+                double velocity_x = img_msg->velocity_x_of_point[i];   // 2D点的速度
+                double velocity_y = img_msg->velocity_y_of_point[i];    
                 assert(z == 1);
-                Eigen::Matrix<double, 7, 1> xyz_uv_velocity;
+                Eigen::Matrix<double, 7, 1> xyz_uv_velocity;  // 3 + 2 + 2
                 xyz_uv_velocity << x, y, z, p_u, p_v, velocity_x, velocity_y;
                 image[feature_id].emplace_back(camera_id, xyz_uv_velocity);
             }

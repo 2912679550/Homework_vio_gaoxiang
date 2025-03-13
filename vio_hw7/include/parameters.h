@@ -8,6 +8,16 @@
 // #include <opencv2/core/eigen.hpp>
 #include <fstream>
 
+#define RED_STRING_START "\033[31m"
+#define GREEN_STRING_START "\033[32m"
+#define YELLOW_STRING_START "\033[33m"
+#define BLUE_STRING_START "\033[34m"
+#define PURPLE_STRING_START "\033[35m"
+#define CYAN_STRING_START "\033[36m"
+#define WHITE_STRING_START "\033[37m"
+#define RESET_STRING "\033[0m"
+
+
 //feature tracker
 // extern int ROW;
 // extern int COL;

@@ -7,45 +7,67 @@
 using namespace std;
 using namespace cv;
 
-double INIT_DEPTH;
-double MIN_PARALLAX;
-double ACC_N, ACC_W;
-double GYR_N, GYR_W;
+double INIT_DEPTH;      // 初始化深度
+double MIN_PARALLAX;    // 最小视差
+double ACC_N, ACC_W;    // 加速度计噪声 加速度计随机游走
+double GYR_N, GYR_W;    // 陀螺仪噪声 陀螺仪随机游走
 
-vector<Eigen::Matrix3d> RIC;
-vector<Eigen::Vector3d> TIC;
+vector<Eigen::Matrix3d> RIC;    // 相机到IMU的旋转外参
+vector<Eigen::Vector3d> TIC;    // 相机到IMU的平移向量
 
-Eigen::Vector3d G{0.0, 0.0, 9.8};
+Eigen::Vector3d G{0.0, 0.0, 9.8};   // 重力向量
 
-double BIAS_ACC_THRESHOLD;
-double BIAS_GYR_THRESHOLD;
-double SOLVER_TIME;
-int NUM_ITERATIONS;
+double BIAS_ACC_THRESHOLD;      // 加速度计偏置阈值
+double BIAS_GYR_THRESHOLD;      // 陀螺仪bias阈值
+double SOLVER_TIME;             // 最大迭代时间
+int NUM_ITERATIONS;             // 最大迭代次数
+// 是否估计外参
 int ESTIMATE_EXTRINSIC;
+// 是否估计时间延迟
 int ESTIMATE_TD;
+// 是否使用滚动快门模型
 int ROLLING_SHUTTER;
+// 外参校准结果路径
 string EX_CALIB_RESULT_PATH;
+// VINS结果路径
 string VINS_RESULT_PATH;
-// string IMU_TOPIC;
-double ROW, COL;
-double TD, TR;
+// 图像的行数
+double ROW;
+// 图像的列数
+double COL;
+// 时间延迟
+double TD;
+// 滚动快门时间
+double TR;
 
 
-
+// 相机的焦距
 int FOCAL_LENGTH;
+// 图像话题
 string IMAGE_TOPIC;
+// IMU话题
 string IMU_TOPIC;
+// 鱼眼相机掩膜
 string FISHEYE_MASK;
+// 相机名称列表
 vector<string> CAM_NAMES;
+// 最大特征点数量
 int MAX_CNT;
+// 最小特征点距离
 int MIN_DIST;
-// int WINDOW_SIZE;
+// 图像处理频率
 int FREQ;
+// 特征点匹配阈值
 double F_THRESHOLD;
+// 是否显示特征点跟踪
 int SHOW_TRACK;
+// 是否进行双目跟踪
 bool STEREO_TRACK;
+// 是否进行直方图均衡化
 int EQUALIZE;
+// 是否使用鱼眼相机模型
 int FISHEYE;
+// 是否发布当前帧
 bool PUB_THIS_FRAME;
 
 
@@ -172,6 +194,8 @@ void readParameters(string config_file)
     }
     fsSettings.release();
 
+    std::cout << GREEN_STRING_START << "1 read parameters finished!! " << RESET_STRING << std::endl;
+    /*
     cout << "1 readParameters:  "
         <<  "\n  INIT_DEPTH: " << INIT_DEPTH
         <<  "\n  MIN_PARALLAX: " << MIN_PARALLAX
@@ -208,5 +232,5 @@ void readParameters(string config_file)
         <<  "\n  FISHEYE:"<<FISHEYE
         <<  "\n  PUB_THIS_FRAME:"<<PUB_THIS_FRAME
     << endl;
-
+    */
 }

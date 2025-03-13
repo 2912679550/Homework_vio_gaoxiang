@@ -139,7 +139,6 @@ CameraFactory::generateCameraFromYamlFile(const std::string& filename)
     case Camera::PINHOLE:
     {
         PinholeCameraPtr camera(new PinholeCamera);
-
         PinholeCamera::Parameters params = camera->getParameters();
         params.readFromYamlFile(filename);
         camera->setParameters(params);

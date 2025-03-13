@@ -28,7 +28,7 @@ std::shared_ptr<System> pSystem;
 void PubImuData()
 {
 	string sImu_data_file = sConfig_path + "MH_05_imu0.txt";
-	cout << "1 PubImuData start sImu_data_filea: " << sImu_data_file << endl;
+	cout << RED_STRING_START << "1 PubImuData start sImu_data_filea: " << sImu_data_file << RESET_STRING << endl;
 	ifstream fsImu;
 	fsImu.open(sImu_data_file.c_str());
 	if (!fsImu.is_open())
@@ -39,14 +39,15 @@ void PubImuData()
 
 	std::string sImu_line;
 	double dStampNSec = 0.0;
-	Vector3d vAcc;
-	Vector3d vGyr;
+	Vector3d vAcc;  // 加速度计
+	Vector3d vGyr;  // 陀螺仪
 	while (std::getline(fsImu, sImu_line) && !sImu_line.empty()) // read imu data
 	{
 		std::istringstream ssImuData(sImu_line);
 		ssImuData >> dStampNSec >> vGyr.x() >> vGyr.y() >> vGyr.z() >> vAcc.x() >> vAcc.y() >> vAcc.z();
 		// cout << "Imu t: " << fixed << dStampNSec << " gyr: " << vGyr.transpose() << " acc: " << vAcc.transpose() << endl;
-		pSystem->PubImuData(dStampNSec / 1e9, vGyr, vAcc);
+		// 数据集中的时间单位为ns，需要转换为s
+        pSystem->PubImuData(dStampNSec / 1e9, vGyr, vAcc);
 		usleep(5000*nDelayTimes);
 	}
 	fsImu.close();
@@ -56,7 +57,7 @@ void PubImageData()
 {
 	string sImage_file = sConfig_path + "MH_05_cam0.txt";
 
-	cout << "1 PubImageData start sImage_file: " << sImage_file << endl;
+	cout << RED_STRING_START << "1 PubImageData start sImage_file: " << RESET_STRING << sImage_file << endl;
 
 	ifstream fsImage;
 	fsImage.open(sImage_file.c_str());

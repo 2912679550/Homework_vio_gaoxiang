@@ -178,18 +178,19 @@ PinholeCamera::Parameters::readFromYamlFile(const std::string& filename)
     m_fy = static_cast<double>(n["fy"]);
     m_cx = static_cast<double>(n["cx"]);
     m_cy = static_cast<double>(n["cy"]);
-    std::cout << "1 PinholeCamera "
-        << "\n  m_cameraName: " << m_cameraName
-        << "\n  m_imageWidth: " << m_imageWidth
-        << "\n  m_imageHeight: " << m_imageHeight
-        << "\n  m_k1: "<< m_k1 
-        << "\n  m_k2: " << m_k2
-        << "\n  m_p1: " << m_p1
-        << "\n  m_p2: " << m_p2
-        << "\n  m_fx: " << m_fx
-        << "\n  m_fy: " << m_fy
-        << "\n  m_cx: " << m_cx
-        << "\n  m_cy: " << m_cy << std::endl << std::endl;
+    std::cout << "1 PinholeCamera created" << std::endl;
+    // std::cout << "1 PinholeCamera "
+    //     << "\n  m_cameraName: " << m_cameraName
+    //     << "\n  m_imageWidth: " << m_imageWidth
+    //     << "\n  m_imageHeight: " << m_imageHeight
+    //     << "\n  m_k1: "<< m_k1
+    //     << "\n  m_k2: " << m_k2
+    //     << "\n  m_p1: " << m_p1
+    //     << "\n  m_p2: " << m_p2
+    //     << "\n  m_fx: " << m_fx
+    //     << "\n  m_fy: " << m_fy
+    //     << "\n  m_cx: " << m_cx
+    //     << "\n  m_cy: " << m_cy << std::endl << std::endl;
     return true;
 }
 

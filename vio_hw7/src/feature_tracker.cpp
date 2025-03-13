@@ -215,7 +215,7 @@ bool FeatureTracker::updateID(unsigned int i)
 
 void FeatureTracker::readIntrinsicParameter(const string &calib_file)
 {
-    cout << "reading paramerter of camera " << calib_file << endl;
+    cout << GREEN_STRING_START <<"reading paramerter of camera " << calib_file << RESET_STRING << endl;
     m_camera = CameraFactory::instance()->generateCameraFromYamlFile(calib_file);
 }
 

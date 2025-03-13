@@ -32,7 +32,7 @@ void Estimator::setParameter()
 {
     for (int i = 0; i < NUM_OF_CAM; i++)
     {
-        tic[i] = TIC[i];
+        tic[i] = TIC[i];    // 这里的TIC和RIC是全局变量，ric和tic就是类内部的成员了
         ric[i] = RIC[i];
         // cout << "1 Estimator::setParameter tic: " << tic[i].transpose()
         //     << " ric: " << ric[i] << endl;
