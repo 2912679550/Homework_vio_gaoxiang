@@ -81,14 +81,28 @@ void FeatureTracker::addPoints()
 void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 {
     cv::Mat img;
+    img.create(_img.size(), _img.type());
     TicToc t_r;
+    
     cur_time = _cur_time;
-
+    std::cout<<CYAN_STRING_START << "Debug 1" << RESET_STRING << std::endl;
     if (EQUALIZE)
     {
-        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(8, 8));
+        // cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(2.0, cv::Size(4, 4));
+        auto clahe = cv::createCLAHE(2.0, cv::Size(8, 8));
+        if (clahe.empty()) {
+            std::cerr << "Failed to create CLAHE object!" << std::endl;
+            return;
+        }
+        // cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(8, 8));
+        std::cout<<CYAN_STRING_START << "Debug 2" << RESET_STRING << std::endl;
         TicToc t_c;
+        // 打印输入图像的尺寸和类型
+        std::cout << "Input image size: " << _img.size() << ", type: " << _img.type() << std::endl;
+
         clahe->apply(_img, img);
+        // clahe->apply(_img, img);
+        std::cout<<CYAN_STRING_START << "Debug 2.5" << RESET_STRING << std::endl;
         //ROS_DEBUG("CLAHE costs: %fms", t_c.toc());
     }
     else
@@ -110,7 +124,9 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
         TicToc t_o;
         vector<uchar> status;
         vector<float> err;
+        std::cout<<CYAN_STRING_START << "Debug 3" << RESET_STRING << std::endl;
         cv::calcOpticalFlowPyrLK(cur_img, forw_img, cur_pts, forw_pts, status, err, cv::Size(21, 21), 3);
+        std::cout<<CYAN_STRING_START << "Debug 4" << RESET_STRING << std::endl;
 
         for (int i = 0; i < int(forw_pts.size()); i++)
             if (status[i] && !inBorder(forw_pts[i]))
@@ -162,7 +178,9 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     prev_un_pts = cur_un_pts;
     cur_img = forw_img;
     cur_pts = forw_pts;
+    std::cout << CYAN_STRING_START << "Debug 5" << RESET_STRING << std::endl;
     undistortedPoints();
+    std::cout << CYAN_STRING_START << "Debug 6" << RESET_STRING << std::endl;
     prev_time = cur_time;
 }
 
